@@ -46,7 +46,10 @@ jobs:
       - name: 📦 Install dependencies
         run: |
           npm ci
-          npm install @eslint/eslintrc --save-dev
+          if [ "${{ matrix.directory }}" = "./frontend" ]; then
+          npm install --save-dev eslint eslint-config-next
+          fi
+          working-directory: ${{ matrix.directory }}
 
       - name: 🧹 Lint code
         if: matrix.directory == './frontend'
