@@ -50,7 +50,7 @@ jobs:
 
       - name: 🧹 Lint code
         if: matrix.directory == './frontend'
-        run: npx eslint . --config eslint.config.mjs --max-warnings=0 --report-unused-disable-directives
+        run: npm run lint
 
       - name: ✅ Run tests
         run: npm test -- --watchAll=false --ci || echo "No tests configured"
