@@ -23,7 +23,7 @@ jobs:
 
     strategy:
       matrix:
-        directory: [ './backend', './frontend' ]
+        directory: ["./backend", "./frontend"]
 
     steps:
       - name: 📥 Checkout code
@@ -32,8 +32,8 @@ jobs:
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
           cache-dependency-path: ${{ matrix.directory }}/package-lock.json
 
       - name: 🔍 Verify critical files
@@ -44,7 +44,9 @@ jobs:
           [ -f "package-lock.json" ] || (echo "::error::package-lock.json missing" && exit 1)
 
       - name: 📦 Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npm install @eslint/eslintrc --save-dev
 
       - name: 🧹 Lint code
         if: matrix.directory == './frontend'
