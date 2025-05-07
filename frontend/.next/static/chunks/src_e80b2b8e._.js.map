@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Users/joelaliyu/Desktop/videotube-fe/src/lib/api.js"],"sourcesContent":["import axios from \"axios\";\n\nconst API_URL = \"https://videotube-57tl.onrender.com/api/v1\";\n\nexport const getAllVideos = async () => {\n  try {\n    const response = await axios.get(API_URL);\n    return response;\n  } catch (error) {\n    const message =\n      error.response?.data?.message || error.message || \"Error fetching videos\";\n    throw new Error(message);\n  }\n};\n"],"names":[],"mappings":";;;AAAA;;AAEA,MAAM,UAAU;AAET,MAAM,eAAe;IAC1B,IAAI;QACF,MAAM,WAAW,MAAM,wIAAA,CAAA,UAAK,CAAC,GAAG,CAAC;QACjC,OAAO;IACT,EAAE,OAAO,OAAO;QACd,MAAM,UACJ,MAAM,QAAQ,EAAE,MAAM,WAAW,MAAM,OAAO,IAAI;QACpD,MAAM,IAAI,MAAM;IAClB;AACF","debugId":null}},
+    {"offset": {"line": 31, "column": 0}, "map": {"version":3,"sources":["file:///Users/joelaliyu/Desktop/videotube-fe/src/components/Navbar.jsx"],"sourcesContent":["export default function Navbar() {\n  return <h1>Navbar</h1>;\n}\n"],"names":[],"mappings":";;;;;AAAe,SAAS;IACtB,qBAAO,6LAAC;kBAAG;;;;;;AACb;KAFwB","debugId":null}}]
+}

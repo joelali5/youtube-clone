@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://videotube-57tl.onrender.com/api/v1";
+const API_URL = "https://youtube-be.onrender.com/api/v1";
 
 export const getAllVideos = async () => {
   try {
