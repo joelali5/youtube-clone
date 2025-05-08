@@ -1,4 +1,4 @@
-name: Full Stack CI/CD
+name: Youtube-clone App
 
 on:
   push:
@@ -13,17 +13,16 @@ env:
   NEXT_TELEMETRY_DISABLED: 1
 
 jobs:
-  build-and-test:
-    name: Build and Test
+  build-test:
+    name: Build, Lint and Test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory: ["./backend", "./frontend"]
     defaults:
       run:
         shell: bash
         working-directory: ${{ matrix.directory }}
-
-    strategy:
-      matrix:
-        directory: ["./backend", "./frontend"]
 
     steps:
       - name: 📥 Checkout code
@@ -36,54 +35,37 @@ jobs:
           cache: "npm"
           cache-dependency-path: ${{ matrix.directory }}/package-lock.json
 
-      - name: 🔍 Verify critical files
-        run: |
-          if [ "${{ matrix.directory }}" = "./frontend" ]; then
-            [ -f "eslint.config.mjs" ] || (echo "::error::ESLint config missing" && exit 1)
-          fi
-          [ -f "package-lock.json" ] || (echo "::error::package-lock.json missing" && exit 1)
-
       - name: 📦 Install dependencies
-        run: |
-          npm ci
-          if [ "${{ matrix.directory }}" = "./frontend" ]; then
-          npm install --save-dev eslint eslint-config-next
-          fi
-          working-directory: ${{ matrix.directory }}
+        run: npm ci
 
-      - name: 🧹 Lint code
+      - name: 🧹 Lint code (only frontend)
         if: matrix.directory == './frontend'
         run: npm run lint
 
-      - name: ✅ Run tests
-        run: npm test -- --watchAll=false --ci || echo "No tests configured"
+      - name: ✅ Run tests (if defined)
+        run: |
+          if npm run | grep -q "test"; then
+            npm test -- --watchAll=false --ci
+          else
+            echo "🟡 No test script defined, skipping."
+          fi
 
-      - name: 🏗 Build project
-        run: npm run build || echo "No build script"
+      - name: 🏗 Build project (if defined)
+        run: |
+          if npm run | grep -q "build"; then
+            npm run build
+          else
+            echo "🟡 No build script defined, skipping."
+          fi
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
 
-      - name: 🏷 Upload artifacts
-        if: github.ref == 'refs/heads/main' && matrix.directory == './frontend'
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build
-          path: |
-            frontend/.next
-            frontend/public
-
-  deploy:
-    name: Deploy to Production
-    needs: build-and-test
+  deploy-backend:
+    name: 🚀 Deploy Backend to Render
+    needs: build-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: 📥 Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-build
-          path: frontend
-
       - name: 🚀 Trigger Render Deploy
         run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
