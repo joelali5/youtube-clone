@@ -19,7 +19,6 @@ jobs:
     strategy:
       matrix:
         directory: ["./backend", "./frontend"]
-
     defaults:
       run:
         shell: bash
@@ -39,29 +38,29 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
-      - name: 🧹 Lint code (only frontend)
+      - name: Verify ESLint installation
         if: matrix.directory == './frontend'
         run: |
-          if npm run | grep -q "lint"; then
-            npm run lint
-          else
-            echo "⚠️ No lint script found, skipping"
-          fi
+          npm list eslint --depth=0 || npm install --save-dev eslint
 
-      - name: ✅ Run tests
+      - name: 🧹 Lint code (only frontend)
+        if: matrix.directory == './frontend'
+        run: npm run lint
+
+      - name: ✅ Run tests (if defined)
         run: |
           if npm run | grep -q "test"; then
             npm test -- --watchAll=false --ci
           else
-            echo "⚠️ No test script found, skipping"
+            echo "🟡 No test script defined, skipping."
           fi
 
-      - name: 🏗 Build project
+      - name: 🏗 Build project (if defined)
         run: |
           if npm run | grep -q "build"; then
             npm run build
           else
-            echo "⚠️ No build script found, skipping"
+            echo "🟡 No build script defined, skipping."
           fi
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
