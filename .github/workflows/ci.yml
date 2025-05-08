@@ -45,7 +45,7 @@ jobs:
 
       - name: 🧹 Lint code (only frontend)
         if: matrix.directory == './frontend'
-        run: npm run lint
+        run: npx eslint . --config=eslint.config.mjs
 
       - name: ✅ Run tests (if defined)
         run: |
