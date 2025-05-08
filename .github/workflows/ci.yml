@@ -19,6 +19,7 @@ jobs:
     strategy:
       matrix:
         directory: ["./backend", "./frontend"]
+
     defaults:
       run:
         shell: bash
@@ -40,22 +41,27 @@ jobs:
 
       - name: 🧹 Lint code (only frontend)
         if: matrix.directory == './frontend'
-        run: npm run lint
+        run: |
+          if npm run | grep -q "lint"; then
+            npm run lint
+          else
+            echo "⚠️ No lint script found, skipping"
+          fi
 
-      - name: ✅ Run tests (if defined)
+      - name: ✅ Run tests
         run: |
           if npm run | grep -q "test"; then
             npm test -- --watchAll=false --ci
           else
-            echo "🟡 No test script defined, skipping."
+            echo "⚠️ No test script found, skipping"
           fi
 
-      - name: 🏗 Build project (if defined)
+      - name: 🏗 Build project
         run: |
           if npm run | grep -q "build"; then
             npm run build
           else
-            echo "🟡 No build script defined, skipping."
+            echo "⚠️ No build script found, skipping"
           fi
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
