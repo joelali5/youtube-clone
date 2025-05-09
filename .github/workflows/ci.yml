@@ -33,19 +33,14 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-          cache-dependency-path: ${{ matrix.directory }}/package-lock.json
+          cache-dependency-path: ${{ matrix.directory[1] }}/package-lock.json
 
       - name: 📦 Install dependencies
         run: npm ci
 
-      - name: Verify ESLint installation
-        if: matrix.directory == './frontend'
-        run: |
-          npm list eslint --depth=0 || npm install --save-dev eslint
-
       - name: 🧹 Lint code (only frontend)
         if: matrix.directory == './frontend'
-        run: npx eslint . --config=eslint.config.mjs
+        run: npm run lint
 
       - name: ✅ Run tests (if defined)
         run: |
