@@ -41,10 +41,10 @@ jobs:
       - name: 🧹 Lint code (only frontend)
         if: matrix.directory == './frontend'
         run: |
-          if npm list --depth=0 | grep -q "eslint@"; then
+          if [ -f "./node_modules/.bin/eslint" ]; then
           npm run lint
           else
-          echo "❌ ESLint not installed. Skipping lint step."
+          echo "❌ ESLint not found in node_modules. Check your devDependencies."
           exit 1
           fi
 
